@@ -1,2 +1,0 @@
-p256-verifier/=lib/p256-verifier/src/
-forge-std/=lib/forge-std/src/
