@@ -12,6 +12,18 @@ import { VerificationLevel, IDKitWidget, useIDKit } from "@worldcoin/idkit";
 import type { ISuccessResult } from "@worldcoin/idkit"
 import { verify } from "./actions/verify";
 import { MdVerified } from "react-icons/md";
+import {
+    AnonAadhaarProof,
+    LogInWithAnonAadhaar,
+    useAnonAadhaar,
+    useProver,
+} from "@anon-aadhaar/react";
+
+type HomeProps = {
+    setUseTestAadhaar: (state: boolean) => void;
+    useTestAadhaar: boolean;
+};
+
 
 export default function HomePage() {
     const router = useRouter()
@@ -24,6 +36,14 @@ export default function HomePage() {
     const action = process.env.NEXT_PUBLIC_WLD_ACTION;
     const { setOpen } = useIDKit();
 
+    const [anonAadhaar] = useAnonAadhaar();
+    const [, latestProof] = useProver();
+
+    useEffect(() => {
+        if (anonAadhaar.status === "logged-in") {
+            console.log(anonAadhaar.status);
+        }
+    }, [anonAadhaar]);
 
     useEffect(() => {
         const privateKey = localStorage.getItem("identity")
@@ -76,7 +96,7 @@ export default function HomePage() {
         <div className='p-[10rem]'>
             <div className="hero-content text-black text-center">
                 <div className="flex flex-col w-max">
-                    <div className="mb-5 text-5xl font-serif font-bold"> Get Your Universal Profile
+                    <div className="mb-5 text-5xl font-serif font-bold"> Get Your Universal Profile ID
                     </div>
                     <div className="mb-5 text-xl">
                         Verify your onchain & offchain data for identity, credit score and healtcare data using TLSNotary & Worldcoin.
@@ -118,9 +138,26 @@ export default function HomePage() {
                             <div className="bg-white p-6 rounded-xl shadow-xl ">
                                 <Link
                                     href="/">
-                                    <div className="bg-white p-6 rounded-xl ">
+                                    <div className="bg-white p-6 rounded-xl">
                                         <h2 className="text-2xl font-semibold mb-4">Nationality Verification</h2>
-                                        <p>Using TLSNotary</p>
+                                        <p>Using AnonAdhaar</p>
+
+                                        <div className='pt-4 align-center '>
+                                            <LogInWithAnonAadhaar nullifierSeed={1234} />
+
+                                        </div>
+
+                                        {/* Render the proof if generated and valid */}
+                                        {anonAadhaar.status === "logged-in" && (
+                                            <>
+                                                <p>✅ Proof is valid</p>
+                                                <p>Got your Aadhaar Identity Proof</p>
+                                                <>Welcome anon!</>
+                                                {latestProof && (
+                                                    <AnonAadhaarProof code={JSON.stringify(latestProof, null, 2)} />
+                                                )}
+                                            </>
+                                        )}
                                     </div>
                                 </Link>
                             </div>
