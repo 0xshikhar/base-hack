@@ -11,6 +11,9 @@ import { Identity } from "@semaphore-protocol/core"
 import { VerificationLevel, IDKitWidget, useIDKit } from "@worldcoin/idkit";
 import type { ISuccessResult } from "@worldcoin/idkit"
 import { verify } from "./actions/verify";
+import { WalletScore } from '@/context/WalletScore';
+import { CreditCardScore } from '@/context/CreditScore';
+import { MdOutlinePendingActions } from "react-icons/md";
 import { MdVerified } from "react-icons/md";
 import {
     AnonAadhaarProof,
@@ -23,6 +26,7 @@ type HomeProps = {
     setUseTestAadhaar: (state: boolean) => void;
     useTestAadhaar: boolean;
 };
+
 
 
 export default function HomePage() {
@@ -140,24 +144,24 @@ export default function HomePage() {
                                     href="/">
                                     <div className="bg-white p-6 rounded-xl">
                                         <h2 className="text-2xl font-semibold mb-4">Nationality Verification</h2>
-                                        <p>Using AnonAdhaar</p>
+                                        <p>Only Indian ID using AnonAdhaar </p>
 
                                         <div className='pt-4 align-center '>
                                             <LogInWithAnonAadhaar nullifierSeed={1234} />
-
+                                            {anonAadhaar.status === "logged-in" && (
+                                                <>
+                                                    <p>✅ Proof is valid</p>
+                                                    <p>Got your Aadhaar Identity Proof</p>
+                                                    <>Welcome anon!</>
+                                                    {latestProof && (
+                                                        <AnonAadhaarProof code={JSON.stringify(latestProof, null, 2)} />
+                                                    )}
+                                                </>
+                                            )}
                                         </div>
 
                                         {/* Render the proof if generated and valid */}
-                                        {anonAadhaar.status === "logged-in" && (
-                                            <>
-                                                <p>✅ Proof is valid</p>
-                                                <p>Got your Aadhaar Identity Proof</p>
-                                                <>Welcome anon!</>
-                                                {latestProof && (
-                                                    <AnonAadhaarProof code={JSON.stringify(latestProof, null, 2)} />
-                                                )}
-                                            </>
-                                        )}
+
                                     </div>
                                 </Link>
                             </div>
@@ -171,7 +175,7 @@ export default function HomePage() {
                                     href="/">
                                     <div className="bg-white p-6 rounded-xl ">
                                         <h2 className="text-2xl font-semibold mb-4">Credit Score Verification</h2>
-                                        <p>Using TLSNotary</p>
+                                        <p>Using TLSNotary (pending)</p>
                                     </div>
                                 </Link>
                             </div>
@@ -180,7 +184,10 @@ export default function HomePage() {
                                     href="/">
                                     <div className="bg-white p-6 rounded-xl ">
                                         <h2 className="text-2xl font-semibold mb-4">Wallet Score</h2>
-                                        <p></p>
+                                        <div className='flex text-3xl justify-center'>
+                                            {WalletScore.stat}
+                                            <MdVerified className='text-green-400' />
+                                        </div>
                                     </div>
                                 </Link>
                             </div>
@@ -190,7 +197,10 @@ export default function HomePage() {
                                     href="/">
                                     <div className="bg-white p-6 rounded-xl ">
                                         <h2 className="text-2xl font-semibold mb-4">Health Data</h2>
-                                        <p>Coming Soon</p>
+                                        <div className='flex text-xl justify-center'>
+                                            Coming Soon
+                                            <MdOutlinePendingActions className='text-green-400 text-3xl' />
+                                        </div>
                                     </div>
                                 </Link>
                             </div>
@@ -201,42 +211,13 @@ export default function HomePage() {
                 </div>
             </div>
 
-            <div className="summary">
-                All reviews are cryptographically guaranteed to be posted by reviewers who previously booked
-                their hotels on{" "}
-                <a
-                    href="https://agoda.com"
-                    target="_blank"
-                    rel="noreferrer noopener nofollow"
-                >
-                    Agoda
-                </a>{""}.
-            </div>
-
-            <div className="divider"></div>
 
             <div className="text-top">
-                <h3><a
-                    href="https://www.agoda.com/v-hotel-bencoolen/hotel/singapore-sg.html"
-                    target="_blank"
-                    rel="noreferrer noopener nofollow"
-                >V Hotel Bencoolen, Singapore</a>
-                </h3>
                 {_reviews.length > 0 && (
                     <button className="button-link" onClick={createReview}>
                         Add Review
                     </button>
                 )}
-            </div>
-
-            <div className="image-container">
-                <Image
-                    src="https://pix8.agoda.net/hotelImages/433173/-1/830fe0338a493daade4983f2e0011966.jpg?ca=7&ce=1&s=450x302"
-                    alt="hotel picture"
-                    width={405}
-                    height={302}
-                    priority={true}
-                />
             </div>
 
             {_reviews.length > 0 ? (

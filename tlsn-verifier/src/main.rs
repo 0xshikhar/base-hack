@@ -7,8 +7,8 @@ const VERIFIER_HOST: &str = "0.0.0.0";
 const VERIFIER_PORT: u16 = 9816;
 
 /// Make sure the following domain is the same on the prover side
-const SERVER_DOMAIN: &str = "www.agoda.com";
-const HOTEL_NAME: &str = "V Hotel Bencoolen"; 
+const SERVER_DOMAIN: &str = "api.x.com";
+// const HOTEL_NAME: &str = "V Hotel Bencoolen"; 
 
 #[tokio::main]
 async fn main() -> Result<(), eyre::ErrReport> {
@@ -21,7 +21,7 @@ async fn main() -> Result<(), eyre::ErrReport> {
         VERIFIER_HOST,
         VERIFIER_PORT,
         SERVER_DOMAIN,
-        HOTEL_NAME,
+        // HOTEL_NAME,
     )
     .await?;
 

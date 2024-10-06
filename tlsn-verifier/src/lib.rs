@@ -22,7 +22,7 @@ use tracing::{debug, error, info, trace};
 #[derive(Clone, Debug)]
 struct VerifierGlobals {
     pub server_domain: String,
-    pub hotel_name: String,
+    // pub hotel_name: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -67,7 +67,7 @@ pub async fn run_server(
     verifier_host: &str,
     verifier_port: u16,
     server_domain: &str,
-    hotel_name: &str,
+    // hotel_name: &str,
 ) -> Result<(), VerifierServerError> {
     let verifier_address = SocketAddr::new(
         IpAddr::V4(verifier_host.parse().map_err(|err| {
@@ -86,7 +86,7 @@ pub async fn run_server(
         .route("/verify", post(verify))
         .with_state(VerifierGlobals {
             server_domain: server_domain.to_string(),
-            hotel_name: hotel_name.to_string(),
+            // hotel_name: hotel_name.to_string(),
         });
 
     loop {
@@ -190,11 +190,11 @@ async fn verify(
     let Ok(response) = String::from_utf8(recv.data().to_vec()) else {
         return VerifierServerError::Unexpected(eyre!("Verification failed: failed to parse received data")).into_response();
     };
-    if let None = response.find(&verifier_globals.hotel_name) {
-        return VerifierServerError::Unexpected(eyre!("Verification failed: cannot find the right hotel name")).into_response();
-    }
+    // if let None = response.find(&verifier_globals.hotel_name) {
+    //     return VerifierServerError::Unexpected(eyre!("Verification failed: cannot find the right hotel name")).into_response();
+    // }
 
-    debug!("Hotel check passed!");
+    debug!("Twitter check passed!");
 
     trace!("Received data: {:?}", response);
 

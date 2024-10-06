@@ -69,7 +69,7 @@ export default function GroupPage() {
         })
 
         if (response.status === 200) {
-            setLogs(`You proved that you've booked this hotel before!`)
+            setLogs(`You proved that you own this account!`)
             setSubmitted(true)
 
             let data = await response.json()
