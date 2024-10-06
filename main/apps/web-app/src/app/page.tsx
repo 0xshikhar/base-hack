@@ -113,6 +113,9 @@ export default function HomePage() {
                                     <div className="bg-white p-6 rounded-xl ">
                                         <h2 className="text-2xl font-semibold mb-4">Twitter Verification</h2>
                                         <p>Using TLSNotary</p>
+                                        <button className="button-link bg-black m-2 px-4 py-2 text-white rounded" onClick={createReview}>
+                                            Verify your Profile
+                                        </button>
                                     </div>
                                 </Link>
                             </div>
@@ -235,10 +238,6 @@ export default function HomePage() {
                     </button>
                 </div>
             )}
-
-            <div className="divider"></div>
-
-            <h3>Other hotels...</h3>
 
         </div>
     )
