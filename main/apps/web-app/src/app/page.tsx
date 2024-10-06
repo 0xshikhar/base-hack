@@ -21,6 +21,10 @@ import {
     useAnonAadhaar,
     useProver,
 } from "@anon-aadhaar/react";
+import { NEBULAID_ADDRESS, getNebulaId } from '@/lib/contract';
+import NebulaIDNFT from '../../contract-artifacts/NebulaIDNFT.json';
+import { useAccount } from 'wagmi'
+import { ethers } from 'ethers';
 
 type HomeProps = {
     setUseTestAadhaar: (state: boolean) => void;
@@ -28,12 +32,11 @@ type HomeProps = {
 };
 
 
-
 export default function HomePage() {
     const router = useRouter()
     const { setLogs } = useContext(LogsContext)
     const { _reviews, _reviewers } = useContext(SemaphoreContext)
-    const [_identity, setIdentity] = useState<Identity>()
+    const [_identity, _setIdentity] = useState<Identity>()
     const [worldcoinScore, setWorldcoinScore] = useState(0);
     const [worldcoinVerified, setWorldcoinVerified] = useState(false);
     const app_id = process.env.NEXT_PUBLIC_WLD_APP_ID as `app_${string}`;
@@ -43,9 +46,50 @@ export default function HomePage() {
     const [anonAadhaar] = useAnonAadhaar();
     const [, latestProof] = useProver();
 
+    const [contract, setContract] = useState(NEBULAID_ADDRESS);
+    const [account, setAccount] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [tokenId, setTokenId] = useState(null);
+    const [identity, setIdentity] = useState(null);
+    const [nationality, setNationality] = useState(null);
+    const [identityStatus, setIdentityStatus] = useState(null);
+
+    useEffect(() => {
+        const init = async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    // @ts-ignore
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    const signer = provider.getSigner();
+                    const address = await signer.getAddress();
+                    setAccount(address);
+
+                    const contractInstance = new ethers.Contract(NEBULAID_ADDRESS, NebulaIDNFT.abi, signer);
+                    setContract(contractInstance as any);
+
+                    const userTokenId = await contractInstance.getUserTokenId(address);
+                    setTokenId(userTokenId.toString());
+
+                    setLoading(false);
+                } catch (error) {
+                    console.error("An error occurred:", error);
+                    setLoading(false);
+                }
+            } else {
+                console.log("Please install MetaMask");
+                setLoading(false);
+            }
+        };
+
+        init();
+    }, []);
+
     useEffect(() => {
         if (anonAadhaar.status === "logged-in") {
+            setNationality(1);
             console.log(anonAadhaar.status);
+
         }
     }, [anonAadhaar]);
 
@@ -57,7 +101,8 @@ export default function HomePage() {
 
             setLogs("Your Semaphore identity has been retrieved from the browser cache 👌🏽")
 
-            setIdentity(identity)
+            _setIdentity(identity)
+            setIdentityStatus(true)
         }
     }, [setLogs])
 
@@ -93,6 +138,44 @@ export default function HomePage() {
             console.log("Successful response from backend:\n", JSON.stringify(data)); // Log the response from our backend for visibility
         } else {
             throw new Error(`Verification failed: ${data.detail}`);
+        }
+    };
+
+    const mintNebulaID = async () => {
+        if (!contract) return;
+        try {
+            // @ts-ignore
+            const tx = await contract.mintNebulaID(
+                true, // twitterVerified
+                worldcoinVerified, // humanVerified (initially false)
+                nationality, // nationality (1 for Indian)
+                1, // healthStatus (1 for Fit)
+                750, // creditScore (1 for Good)
+                92 // walletScore
+            );
+            await tx.wait();
+            console.log("NebulaID minted successfully");
+            const userTokenId = await contract.getUserTokenId(account);
+            setTokenId(userTokenId.toString());
+        } catch (error) {   
+            console.error("Error minting NebulaID:", error);
+        }
+    };
+
+    const getIdentity = async () => {
+        if (!contract || !tokenId) return;
+        try {
+            const identityData = await contract.getIdentity(tokenId);
+            setIdentity({
+                twitterVerified: identityData.twitterVerified,
+                humanVerified: identityData.humanVerified,
+                nationality: ['Unspecified', 'Indian', 'US'][identityData.nationality],
+                healthStatus: ['Unspecified', 'Fit', 'Unfit'][identityData.healthStatus],
+                creditScore: ['Unspecified', 'Good', 'Bad'][identityData.creditScore],
+                walletScore: identityData.walletScore.toString(),
+            });
+        } catch (error) {
+            console.error("Error getting identity:", error);
         }
     };
 
@@ -234,11 +317,34 @@ export default function HomePage() {
             ) : (
                 <div>
                     <button className="button" onClick={createReview}>
-                        Create Review
+                        Create Verify
                     </button>
                 </div>
             )}
+            <p>Your Token ID: {tokenId || "You don't have a NebulaID yet"}</p>
 
+            {!tokenId && (
+                <button onClick={mintNebulaID} className='bg-black text-white px-6 py-4 rounded-xl'>Mint Your NebulaID</button>
+            )}
+
+            {tokenId && (
+                <>
+                    <button onClick={getIdentity}>Get Identity</button>
+                </>
+            )}
+
+            {identity && (
+                <div>
+                    <h2>Your NebulaID Identity:</h2>
+                    <p>Twitter Verified: {identity.twitterVerified.toString()}</p>
+                    <p>Human Verified: {identity.humanVerified.toString()}</p>
+                    <p>Nationality: {identity.nationality}</p>
+                    <p>Health Status: {identity.healthStatus}</p>
+                    <p>Credit Score: {identity.creditScore}</p>
+                    <p>Wallet Score: {identity.walletScore}</p>
+                </div>
+            )}
         </div>
+
     )
 }

@@ -89,17 +89,11 @@ export default function GroupPage() {
     }, []);
 
     return (
-        <>
+        <div className="p-10 px-10">
             <h2>Prove Yourself</h2>
             <div className="summary">
-                To post a review, you must first prove that you have previously booked{" "}
-                <a
-                    href="https://www.agoda.com/v-hotel-bencoolen/hotel/singapore-sg.html"
-                    target="_blank"
-                    rel="noreferrer noopener nofollow"
-                >
-                    V Hotel Bencoolen
-                </a>{" "} in Agoda.
+                you must first prove that you have a valid twitter account{" "}
+
             </div>
 
             <div className="summary">
@@ -119,7 +113,7 @@ export default function GroupPage() {
                 >
                     TLSN extension
                 </a>{" "}
-                on the Agoda website.
+                on the X website.
             </div>
 
             <div className="banner-container">
@@ -149,7 +143,7 @@ export default function GroupPage() {
                 <button
                     className="button"
                     type="submit"
-                    disabled={_loading || _submitted }
+                    disabled={_loading || _submitted}
                     onClick={triggerFileInput}
                 >
                     <span>
@@ -169,6 +163,6 @@ export default function GroupPage() {
                 step={2}
                 onPrevClick={() => router.push("/")}
             />
-        </>
+        </div>
     )
 }

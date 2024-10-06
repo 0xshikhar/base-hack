@@ -60,7 +60,7 @@ export default function Navbar() {
 					<div
 						className={style.headerItem}
 						onClick={() => {
-							router.push("/dashboard");
+							router.push("/");
 						}}
 					>
 						Dashboard
@@ -69,7 +69,7 @@ export default function Navbar() {
 					<div
 						className={style.headerItem}
 						onClick={() => {
-							router.push("/identity");
+							router.push("/");
 						}}
 					>
 						Identity
