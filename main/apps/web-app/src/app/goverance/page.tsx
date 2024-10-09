@@ -1,60 +1,59 @@
-"use client";
-import React, { useState, useEffect } from 'react';
-import { useAccount } from 'wagmi'
-import { ethers } from 'ethers';
-import { GOVERNANCE_ADDRESS } from '@/lib/contract';
-import GovernanceABI from '../../../contract-artifacts/Governance.json';
-import { toast, ToastContainer } from 'react-toastify';
-import "react-toastify/dist/ReactToastify.css";
+"use client"
+import React, { useState, useEffect } from "react"
+import { useAccount } from "wagmi"
+import { ethers } from "ethers"
+import { GOVERNANCE_ADDRESS } from "@/lib/contract"
+import GovernanceABI from "../../../contract-artifacts/Governance.json"
+import { toast, ToastContainer } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 
 interface Proposal {
-    id: number;
-    name: string;
-    description: string;
-    forVotes: string;
-    againstVotes: string;
-    executed: boolean;
-    endTime: Date;
-    proposer: string;
+    id: number
+    name: string
+    description: string
+    forVotes: string
+    againstVotes: string
+    executed: boolean
+    endTime: Date
+    proposer: string
 }
 
 const Governance: React.FC = () => {
     const account = useAccount()
-    const address = account.address;
+    const address = account.address
 
-    const [proposals, setProposals] = useState<Proposal[]>([]);
-    const [newProposalName, setNewProposalName] = useState('');
-    const [newProposalDescription, setNewProposalDescription] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [proposals, setProposals] = useState<Proposal[]>([])
+    const [newProposalName, setNewProposalName] = useState("")
+    const [newProposalDescription, setNewProposalDescription] = useState("")
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         if (address && account.isConnected) {
             const fetchData = async () => {
                 try {
-                    await fetchProposals();
+                    await fetchProposals()
                 } catch (error) {
-                    console.error("Error fetching proposals:", error);
+                    console.error("Error fetching proposals:", error)
                 }
-            };
-            fetchData();
+            }
+            fetchData()
         }
-    }, [address, account.chainId, account.isConnected]);
-
+    }, [address, account.chainId, account.isConnected])
 
     const getGovernanceContract = () => {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        if (!provider) throw new Error("No Web3 Provider");
-        return new ethers.Contract(GOVERNANCE_ADDRESS, GovernanceABI.abi, provider.getSigner());
-    };
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        if (!provider) throw new Error("No Web3 Provider")
+        return new ethers.Contract(GOVERNANCE_ADDRESS, GovernanceABI.abi, provider.getSigner())
+    }
 
     const fetchProposals = async () => {
         try {
-            const contract = getGovernanceContract();
-            const count = await contract.getProposalCount();
-            const fetchedProposals: Proposal[] = [];
+            const contract = getGovernanceContract()
+            const count = await contract.getProposalCount()
+            const fetchedProposals: Proposal[] = []
 
             for (let i = 0; i < count.toNumber(); i++) {
-                const proposal = await contract.getProposal(i);
+                const proposal = await contract.getProposal(i)
                 fetchedProposals.push({
                     id: i,
                     name: proposal.name,
@@ -64,161 +63,124 @@ const Governance: React.FC = () => {
                     executed: proposal.executed,
                     endTime: new Date(proposal.endTime.toNumber() * 1000),
                     proposer: proposal.proposer
-                });
+                })
             }
-            setProposals(fetchedProposals);
+            setProposals(fetchedProposals)
         } catch (error) {
-            console.error("Error fetching proposals:", error);
-            toast.error("Failed to fetch proposals");
+            console.error("Error fetching proposals:", error)
+            toast.error("Failed to fetch proposals")
         }
-    };
+    }
 
     const joinCommunity = async () => {
-        setLoading(true);
+        setLoading(true)
         try {
             console.log("Joining Community")
-            toast(
-                <div>
-                    Link - {`https://opencampus-codex.blockscout.com/tx/${tx.hash}`}
-                </div>
-            );
+            toast(<div>Link - {`https://opencampus-codex.blockscout.com/tx/${tx.hash}`}</div>)
         } catch (error) {
-            console.error("Error joining community:", error);
-            toast.error("Failed to join community!");
+            console.error("Error joining community:", error)
+            toast.error("Failed to join community!")
 
-            toast(
-                <div>
-                    {(error as any)?.reason || "Unknown error occurred"}
-                </div>
-            );
+            toast(<div>{(error as any)?.reason || "Unknown error occurred"}</div>)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
     }
 
     const createProposal = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!newProposalName.trim() || !newProposalDescription.trim()) return;
+        e.preventDefault()
+        if (!newProposalName.trim() || !newProposalDescription.trim()) return
 
-        setLoading(true);
+        setLoading(true)
         try {
-            console.log("Creating proposal:", newProposalName, newProposalDescription);
-            const contract = getGovernanceContract();
+            console.log("Creating proposal:", newProposalName, newProposalDescription)
+            const contract = getGovernanceContract()
             // For this example, we're not including execution data
-            const executionData = "0x";
-            const tx = await contract.createProposal(newProposalName, newProposalDescription, executionData);
-            console.log("Transaction sent:", tx.hash);
-            const receipt = await tx.wait();
-            console.log("Transaction confirmed:", receipt);
-            toast.success("Proposal Created Successfully!");
+            const executionData = "0x"
+            const tx = await contract.createProposal(newProposalName, newProposalDescription, executionData)
+            console.log("Transaction sent:", tx.hash)
+            const receipt = await tx.wait()
+            console.log("Transaction confirmed:", receipt)
+            toast.success("Proposal Created Successfully!")
 
-            toast(
-                <div>
+            toast(<div></div>)
 
-                </div>
-            );
-
-            setNewProposalName('');
-            setNewProposalDescription('');
-            await fetchProposals();
+            setNewProposalName("")
+            setNewProposalDescription("")
+            await fetchProposals()
         } catch (error) {
-            console.error("Error creating proposal:", error);
-            toast.error("Failed to create proposal!");
+            console.error("Error creating proposal:", error)
+            toast.error("Failed to create proposal!")
 
-            toast(
-                <div>
-                    {(error as any)?.reason || "Unknown error occurred"}
-                </div>
-            );
+            toast(<div>{(error as any)?.reason || "Unknown error occurred"}</div>)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
     const vote = async (proposalId: number, support: boolean) => {
-        setLoading(true);
+        setLoading(true)
         try {
-            const contract = getGovernanceContract();
-            console.log("Voting on proposal:", proposalId, support);
-            const tx = await contract.vote(proposalId, support);
-            console.log("Transaction sent:", tx.hash);
-            const receipt = await tx.wait();
-            console.log("Transaction confirmed:", receipt);
-            toast.success("Voted Successfully!");
+            const contract = getGovernanceContract()
+            console.log("Voting on proposal:", proposalId, support)
+            const tx = await contract.vote(proposalId, support)
+            console.log("Transaction sent:", tx.hash)
+            const receipt = await tx.wait()
+            console.log("Transaction confirmed:", receipt)
+            toast.success("Voted Successfully!")
 
-            toast(
-                <div>
-                    Link - {`https://opencampus-codex.blockscout.com/tx/${tx.hash}`}
-                </div>
-            );
+            toast(<div>Link - {`https://opencampus-codex.blockscout.com/tx/${tx.hash}`}</div>)
 
-            await fetchProposals();
+            await fetchProposals()
         } catch (error) {
-            console.error("Error voting:", error);
-            toast.error("Failed to vote!");
+            console.error("Error voting:", error)
+            toast.error("Failed to vote!")
 
-            toast(
-                <div>
-                    {(error as any)?.reason || "Unknown error occurred"}
-                </div>
-            );
+            toast(<div>{(error as any)?.reason || "Unknown error occurred"}</div>)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
     const executeProposal = async (proposalId: number) => {
-        setLoading(true);
+        setLoading(true)
         try {
-            const contract = getGovernanceContract();
-            console.log("Executing proposal:", proposalId);
-            const tx = await contract.executeProposal(proposalId);
-            console.log("Transaction sent:", tx.hash);
-            const receipt = await tx.wait();
-            console.log("Transaction confirmed:", receipt);
-            toast.success("Proposal Executed Successfully!");
+            const contract = getGovernanceContract()
+            console.log("Executing proposal:", proposalId)
+            const tx = await contract.executeProposal(proposalId)
+            console.log("Transaction sent:", tx.hash)
+            const receipt = await tx.wait()
+            console.log("Transaction confirmed:", receipt)
+            toast.success("Proposal Executed Successfully!")
 
-            toast(
-                <div>
-                    Link - {`https://opencampus-codex.blockscout.com/tx/${tx.hash}`}
-                </div>
-            );
+            toast(<div>Link - {`https://opencampus-codex.blockscout.com/tx/${tx.hash}`}</div>)
 
-            await fetchProposals();
+            await fetchProposals()
         } catch (error) {
-            console.error("Error executing proposal:", error);
-            toast.error("Failed to execute proposal!");
+            console.error("Error executing proposal:", error)
+            toast.error("Failed to execute proposal!")
 
-            toast(
-                <div>
-                    {(error as any)?.reason || "Unknown error occurred"}
-                </div>
-            );
+            toast(<div>{(error as any)?.reason || "Unknown error occurred"}</div>)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
     if (!account.isConnected) {
         return (
             <div className="flex items-center align-middle min-h-screen text-center justify-center text-4xl font-bold">
-                <div>
-                    Please connect your wallet.
-                </div>
+                <div>Please connect your wallet.</div>
             </div>
-        );
+        )
     }
 
     return (
         <div className="container mx-auto px-32 py-16">
             <h1 className="text-3xl font-bold mb-6">Governance</h1>
 
-            <div className='flex py-5'>
+            <div className="flex py-5">
                 <h2 className="text-2xl font-semibold pr-5">Join Goverance Community</h2>
-                <button
-                    onClick={joinCommunity}
-                    className="bg-black text-white text font-bold px-4 py-2 rounded-3xl "
-                >
+                <button onClick={joinCommunity} className="bg-black text-white text font-bold px-4 py-2 rounded-3xl ">
                     Join
                 </button>
             </div>
@@ -238,12 +200,8 @@ const Governance: React.FC = () => {
                     className="w-full p-2 border rounded bg-white mb-2"
                     rows={3}
                 />
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
-                >
-                    {loading ? 'Creating...' : 'Create Proposal'}
+                <button type="submit" disabled={loading} className="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+                    {loading ? "Creating..." : "Create Proposal"}
                 </button>
             </form>
 
@@ -253,7 +211,9 @@ const Governance: React.FC = () => {
                     <div key={proposal.id} className="border p-4 mb-4 rounded">
                         <h3 className="text-xl font-semibold">{proposal.name}</h3>
                         <p className="text-gray-600 mb-2">{proposal.description}</p>
-                        <p>For: {proposal.forVotes} | Against: {proposal.againstVotes}</p>
+                        <p>
+                            For: {proposal.forVotes} | Against: {proposal.againstVotes}
+                        </p>
                         <p>Ends: {proposal.endTime.toLocaleString()}</p>
                         <p>Proposer: {proposal.proposer}</p>
                         {!proposal.executed && new Date() < proposal.endTime && (
@@ -287,8 +247,8 @@ const Governance: React.FC = () => {
                 ))}
             </div>
             <ToastContainer position="top-right" autoClose={5000} />
-        </div >
-    );
-};
+        </div>
+    )
+}
 
-export default Governance;
+export default Governance

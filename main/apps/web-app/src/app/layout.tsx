@@ -2,9 +2,9 @@ import PageContainer from "@/components/PageContainer"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import Navbar from "@/components/navigation/navbar";
-import '@rainbow-me/rainbowkit/styles.css';
-import { Providers } from './providers';
+import Navbar from "@/components/navigation/navbar"
+import "@rainbow-me/rainbowkit/styles.css"
+import { Providers } from "./providers"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: "NebulaID",
     description: " A InterPlantery Decentralized Identity Protocol  ",
     icons: { icon: "/nebula.png", apple: "/nebula.png" },
-    metadataBase: new URL("https://demo.semaphore.pse.dev"),
+    metadataBase: new URL("https://demo.semaphore.pse.dev")
     // openGraph: {
     //     type: "website",
     //     url: "https://demo.semaphore.pse.dev",
@@ -41,7 +41,6 @@ export default function RootLayout({
                             <Navbar />
                             {children}
                         </div>
-
                     </PageContainer>
                 </Providers>
             </body>

@@ -4,7 +4,7 @@ import { getHardhatNetworks } from "@semaphore-protocol/utils"
 import { config as dotenvConfig } from "dotenv"
 import { HardhatUserConfig } from "hardhat/config"
 import { resolve } from "path"
-import "@nomicfoundation/hardhat-foundry";
+import "@nomicfoundation/hardhat-foundry"
 import "./tasks/deploy"
 
 dotenvConfig({ path: resolve(__dirname, "../../.env") })

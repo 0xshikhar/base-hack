@@ -1,23 +1,20 @@
-'use client';
+"use client"
 
-import * as React from 'react';
-import '@rainbow-me/rainbowkit/styles.css';
+import * as React from "react"
+import "@rainbow-me/rainbowkit/styles.css"
 
 import {
     getDefaultConfig,
     RainbowKitProvider,
     connectorsForWallets,
     getDefaultWallets,
-    Chain,
-} from '@rainbow-me/rainbowkit';
+    Chain
+} from "@rainbow-me/rainbowkit"
 
-import { WagmiProvider } from 'wagmi';
-import {
-    QueryClientProvider,
-    QueryClient,
-} from "@tanstack/react-query";
-import 'dotenv/config'
-import { sepolia, scrollSepolia, mantaSepoliaTestnet } from 'viem/chains';
+import { WagmiProvider } from "wagmi"
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
+import "dotenv/config"
+import { sepolia, scrollSepolia, mantaSepoliaTestnet } from "viem/chains"
 
 // const opencampus = {
 //     id: 656476,
@@ -41,36 +38,34 @@ import { sepolia, scrollSepolia, mantaSepoliaTestnet } from 'viem/chains';
 //     testnet: true,
 // } as const satisfies Chain;
 
-const projectId = '9811958bd307518b364ff7178034c435';
+const projectId = "9811958bd307518b364ff7178034c435"
 
 const config = getDefaultConfig({
-    appName: 'NebulaID',
+    appName: "NebulaID",
     projectId: projectId,
-    chains: [ sepolia, scrollSepolia, mantaSepoliaTestnet],
-    ssr: true, // If your dApp uses server side rendering (SSR)
-});
+    chains: [sepolia, scrollSepolia, mantaSepoliaTestnet],
+    ssr: true // If your dApp uses server side rendering (SSR)
+})
 
 const { wallets } = getDefaultWallets({
-    appName: 'RainbowKit demo',
-    projectId,
-});
+    appName: "RainbowKit demo",
+    projectId
+})
 
 const demoAppInfo = {
-    appName: 'My Wallet Demo',
-};
+    appName: "My Wallet Demo"
+}
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 export function Providers({ children }: { children: React.ReactNode }) {
-    const [mounted, setMounted] = React.useState(false);
-    React.useEffect(() => setMounted(true), []);
+    const [mounted, setMounted] = React.useState(false)
+    React.useEffect(() => setMounted(true), [])
     return (
         <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
-                <RainbowKitProvider appInfo={demoAppInfo}>
-                    {mounted && children}
-                </RainbowKitProvider>
+                <RainbowKitProvider appInfo={demoAppInfo}>{mounted && children}</RainbowKitProvider>
             </QueryClientProvider>
         </WagmiProvider>
-    );
+    )
 }

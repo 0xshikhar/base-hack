@@ -1,4 +1,4 @@
-import { FaWallet } from "react-icons/fa";
+import { FaWallet } from "react-icons/fa"
 
 export const WalletScore = {
     name: "WalletScore",
@@ -6,5 +6,4 @@ export const WalletScore = {
     change: "6.4%",
     changeType: "decrease",
     icon: FaWallet
-    ,
-};
+}

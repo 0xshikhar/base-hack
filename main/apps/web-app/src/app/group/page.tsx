@@ -79,7 +79,6 @@ export default function GroupPage() {
             addReviewer(_identity.commitment.toString())
             setLogs(`You have joined the reviewer group event 🎉 Share your review anonymously!`)
             router.push("/review")
-
         } else {
             setLogs("Some error occurred, please try again!")
         }
@@ -87,37 +86,29 @@ export default function GroupPage() {
         setLoading(false)
     }, [_identity, _signature, addReviewer, setLogs])
 
-    const reviewerHasJoined = useCallback((identity: Identity) => {
-        return _reviewers.includes(identity.commitment.toString())
-    }, [_reviewers])
+    const reviewerHasJoined = useCallback(
+        (identity: Identity) => {
+            return _reviewers.includes(identity.commitment.toString())
+        },
+        [_reviewers]
+    )
 
     return (
         <>
             <h2>Join as Reviewer</h2>
 
-            <div className="summary">
-                Congratulations! You've been verified to have booked the hotel before.
-            </div>
+            <div className="summary">Congratulations! You've been verified to have booked the hotel before.</div>
 
             <div className="summary">
                 You can now join the anonymous{" "}
-                <a
-                    href="https://semaphore.pse.dev"
-                    target="_blank"
-                    rel="noreferrer noopener nofollow"
-                >
+                <a href="https://semaphore.pse.dev" target="_blank" rel="noreferrer noopener nofollow">
                     Semaphore
-                </a>{" "} reviewer group to start posting anonymous reviews!
+                </a>{" "}
+                reviewer group to start posting anonymous reviews!
             </div>
 
             <div className="banner-container">
-                <Image
-                    src="/social-media.png"
-                    alt="tlsn logo"
-                    width={500}
-                    height={200}
-                    priority={true}
-                />
+                <Image src="/social-media.png" alt="tlsn logo" width={500} height={200} priority={true} />
             </div>
 
             <div className="divider"></div>
@@ -135,10 +126,7 @@ export default function GroupPage() {
 
             <div className="divider"></div>
 
-            <Stepper
-                step={3}
-                onPrevClick={() => router.push("/prove")}
-            />
+            <Stepper step={3} onPrevClick={() => router.push("/prove")} />
         </>
     )
 }

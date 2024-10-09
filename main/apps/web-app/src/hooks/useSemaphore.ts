@@ -20,7 +20,7 @@ export default function useSemaphore(): SemaphoreContextType {
         })
 
         const members = await semaphore.getGroupMembers(process.env.NEXT_PUBLIC_REVIEWER_GROUP_ID as string)
-        members.forEach((value, i) => members[i] = value.toString())
+        members.forEach((value, i) => (members[i] = value.toString()))
         setReviewers(members)
     }, [])
 
@@ -32,8 +32,8 @@ export default function useSemaphore(): SemaphoreContextType {
     )
 
     const refreshReview = useCallback(async (): Promise<void> => {
-        const provider = new JsonRpcProvider("http://127.0.0.1:8545");
-        const contract = new Contract(process.env.NEXT_PUBLIC_REVIEW_CONTRACT_ADDRESS as string, Feedback.abi, provider);
+        const provider = new JsonRpcProvider("http://127.0.0.1:8545")
+        const contract = new Contract(process.env.NEXT_PUBLIC_REVIEW_CONTRACT_ADDRESS as string, Feedback.abi, provider)
 
         const reviews: BigNumberish[] = await contract.getPosts()
 

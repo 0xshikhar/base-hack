@@ -7,7 +7,7 @@ import Review from "../../../../contracts/artifacts/contracts/Review.sol/Review.
 import Stepper from "../../components/Stepper"
 import LogsContext from "../../context/LogsContext"
 import SemaphoreContext from "../../context/SemaphoreContext"
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid"
 import Image from "next/image"
 
 export default function ReviewPage() {
@@ -102,11 +102,15 @@ export default function ReviewPage() {
 
     return (
         <>
-            <h2><a
+            <h2>
+                <a
                     href="https://www.agoda.com/v-hotel-bencoolen/hotel/singapore-sg.html"
                     target="_blank"
                     rel="noreferrer noopener nofollow"
-                >V Hotel Bencoolen, Singapore</a></h2>
+                >
+                    V Hotel Bencoolen, Singapore
+                </a>
+            </h2>
 
             <div className="image-container">
                 <Image

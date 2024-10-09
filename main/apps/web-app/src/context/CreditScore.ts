@@ -1,4 +1,4 @@
-import { FaCreditCard } from "react-icons/fa6";
+import { FaCreditCard } from "react-icons/fa6"
 
 export const CreditCardScore = {
     name: "CreditScore",
@@ -6,5 +6,4 @@ export const CreditCardScore = {
     change: "6.4%",
     changeType: "increase",
     icon: FaCreditCard
-    ,
-};
+}

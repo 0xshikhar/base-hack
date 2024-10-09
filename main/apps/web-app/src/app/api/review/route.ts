@@ -35,7 +35,14 @@ export async function POST(req: NextRequest) {
     const { review, reviewerId, merkleTreeDepth, merkleTreeRoot, nullifier, points } = await req.json()
 
     try {
-        const transaction = await contract.sendPost(merkleTreeDepth, merkleTreeRoot, nullifier, review, reviewerId, points)
+        const transaction = await contract.sendPost(
+            merkleTreeDepth,
+            merkleTreeRoot,
+            nullifier,
+            review,
+            reviewerId,
+            points
+        )
 
         await transaction.wait()
 

@@ -1,16 +1,16 @@
-import { ethers } from 'ethers'
-import GOVERNANCE from '../../contract-artifacts/Governance.json';
-import NEBULAID from '../../contract-artifacts/NebulaIDNFT.json';
+import { ethers } from "ethers"
+import GOVERNANCE from "../../contract-artifacts/Governance.json"
+import NEBULAID from "../../contract-artifacts/NebulaIDNFT.json"
 
-export const GOVERNANCE_ADDRESS = '0x0b3a2D73D07eA2D5D0D0FB4Db09004f74D92767a';
-export const NEBULAID_ADDRESS = '0x419cFe85e77a0A26B9989059057318F59764F7C5';
+export const GOVERNANCE_ADDRESS = "0x0b3a2D73D07eA2D5D0D0FB4Db09004f74D92767a"
+export const NEBULAID_ADDRESS = "0x419cFe85e77a0A26B9989059057318F59764F7C5"
 
 // OwnerWallet = 0xBB79D409D53E7E0bE4E412465dEBee16A7E208f2;
 
 export function getGoveranceContract(provider: ethers.providers.Web3Provider) {
-    return new ethers.Contract(GOVERNANCE_ADDRESS, GOVERNANCE.abi, provider.getSigner());
+    return new ethers.Contract(GOVERNANCE_ADDRESS, GOVERNANCE.abi, provider.getSigner())
 }
 
 export function getNebulaId(provider: ethers.providers.Web3Provider) {
-    return new ethers.Contract(NEBULAID_ADDRESS, NEBULAID.abi, provider.getSigner());
+    return new ethers.Contract(NEBULAID_ADDRESS, NEBULAID.abi, provider.getSigner())
 }
