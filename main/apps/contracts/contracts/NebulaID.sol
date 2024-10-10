@@ -6,9 +6,21 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract NebulaIDNFT is ERC721, Ownable {
     uint256 private _tokenIdCounter;
-    enum Nationality { Unspecified, Indian, US }
-    enum HealthStatus { Unspecified, Fit, Unfit }
-    enum CreditScore { Unspecified, Good, Bad }
+    enum Nationality {
+        Unspecified,
+        Indian,
+        US
+    }
+    enum HealthStatus {
+        Unspecified,
+        Fit,
+        Unfit
+    }
+    enum CreditScore {
+        Unspecified,
+        Good,
+        Bad
+    }
 
     struct NebulaIdentity {
         bool twitterVerified;
@@ -35,7 +47,6 @@ contract NebulaIDNFT is ERC721, Ownable {
         HealthStatus _healthStatus,
         CreditScore _creditScore,
         uint256 _walletScore
-
     ) external {
         require(userToTokenId[msg.sender] == 0, "NebulaID: User already has an NFT");
 
@@ -45,11 +56,11 @@ contract NebulaIDNFT is ERC721, Ownable {
 
         identities[newTokenId] = NebulaIdentity({
             twitterVerified: _twitterVerified,
-            humanVerified: _humanVerified, 
+            humanVerified: _humanVerified,
             nationality: _nationality,
             healthStatus: _healthStatus,
             creditScore: _creditScore,
-            walletScore: _walletScore 
+            walletScore: _walletScore
         });
 
         _tokenIdCounter++;

@@ -1,12 +1,10 @@
+// @ts-nocheck
 "use client"
-import Head from "next/head"
 import Link from "next/link"
-// import { BsArrowRight } from 'react-icons/bs'
 import { useRouter } from "next/navigation"
 import { useCallback, useContext, useEffect, useState } from "react"
 import LogsContext from "../context/LogsContext"
 import SemaphoreContext from "@/context/SemaphoreContext"
-import Image from "next/image"
 import { Identity } from "@semaphore-protocol/core"
 import { VerificationLevel, IDKitWidget, useIDKit } from "@worldcoin/idkit"
 import type { ISuccessResult } from "@worldcoin/idkit"
@@ -16,10 +14,10 @@ import { CreditCardScore } from "@/context/CreditScore"
 import { MdOutlinePendingActions } from "react-icons/md"
 import { MdVerified } from "react-icons/md"
 import { AnonAadhaarProof, LogInWithAnonAadhaar, useAnonAadhaar, useProver } from "@anon-aadhaar/react"
-import { NEBULAID_ADDRESS, getNebulaId } from "@/lib/contract"
+import { NEBULAID_ADDRESS } from "@/lib/contract"
 import NebulaIDNFT from "../../contract-artifacts/NebulaIDNFT.json"
 import { useAccount } from "wagmi"
-import { ethers } from "ethers"
+import { ethers, Contract, InfuraProvider, JsonRpcProvider, Wallet } from "ethers"
 
 type HomeProps = {
     setUseTestAadhaar: (state: boolean) => void
@@ -30,7 +28,12 @@ export default function HomePage() {
     const router = useRouter()
     const { setLogs } = useContext(LogsContext)
     const { address, isConnected } = useAccount()
-    const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null)
+    const [provider, setProvider] = useState(null)
+    const ethereumPrivateKey = process.env.ETHEREUM_PRIVATE_KEY;
+    const ethereumNetwork = process.env.NEXT_PUBLIC_DEFAULT_NETWORK
+    const infuraApiKey = process.env.INFURA_API_KEY
+    const contractAddress = process.env.NEXT_PUBLIC_REVIEW_CONTRACT_ADDRESS
+
 
     const { _reviews, _reviewers } = useContext(SemaphoreContext)
     const [_identity, _setIdentity] = useState<Identity>()
@@ -47,8 +50,8 @@ export default function HomePage() {
     const [loading, setLoading] = useState(true)
     const [tokenId, setTokenId] = useState(null)
     const [identity, setIdentity] = useState(null)
-    const [nationality, setNationality] = useState(null)
-    const [identityStatus, setIdentityStatus] = useState(null)
+    const [nationality, setNationality] = useState(0)
+    const [identityStatus, setIdentityStatus] = useState(false)
 
     useEffect(() => {
         const init = async () => {
@@ -56,18 +59,24 @@ export default function HomePage() {
                 try {
                     // @ts-ignore
                     if (typeof window !== "undefined" && window.ethereum) {
-                        const provider = new ethers.providers.Web3Provider(window.ethereum)
+                        const provider = ethereumNetwork === "localhost"
+                            ? new JsonRpcProvider("http://127.0.0.1:8545")
+                            : new InfuraProvider(ethereumNetwork, infuraApiKey);
+                        if (!provider) throw new Error("No Web3 Provider")
+                        // @ts-ignore
                         setProvider(provider)
                     }
 
-                    const contractInstance = new ethers.Contract(
+                    // @ts-ignore
+                    const signer = new Wallet(ethereumPrivateKey, provider)
+                    const contract = new ethers.Contract(
                         NEBULAID_ADDRESS,
                         NebulaIDNFT.abi,
-                        provider.getSigner()
+                        signer
                     )
-                    setContract(contractInstance as any)
+                    setContract(contract as any)
 
-                    const userTokenId = await contractInstance.getUserTokenId(address)
+                    const userTokenId = await contract.getUserTokenId(address)
                     setTokenId(userTokenId.toString())
 
                     setLoading(false)
@@ -90,6 +99,8 @@ export default function HomePage() {
             console.log(anonAadhaar.status)
         }
     }, [anonAadhaar])
+
+
 
     useEffect(() => {
         const privateKey = localStorage.getItem("identity")

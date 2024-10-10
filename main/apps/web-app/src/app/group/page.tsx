@@ -97,7 +97,7 @@ export default function GroupPage() {
         <>
             <h2>Join as Reviewer</h2>
 
-            <div className="summary">Congratulations! You've been verified to have booked the hotel before.</div>
+            <div className="summary">Congratulations! You have been verified to have booked the hotel before.</div>
 
             <div className="summary">
                 You can now join the anonymous{" "}

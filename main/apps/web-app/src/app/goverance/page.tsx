@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react"
 import { useAccount } from "wagmi"
-import { ethers } from "ethers"
+import { ethers, InfuraProvider, JsonRpcProvider, Wallet } from "ethers"
 import { GOVERNANCE_ADDRESS } from "@/lib/contract"
 import GovernanceABI from "../../../contract-artifacts/Governance.json"
 import { toast, ToastContainer } from "react-toastify"
@@ -21,11 +21,16 @@ interface Proposal {
 const Governance: React.FC = () => {
     const account = useAccount()
     const address = account.address
+    // const { InfuraProvider } = providers
+
 
     const [proposals, setProposals] = useState<Proposal[]>([])
     const [newProposalName, setNewProposalName] = useState("")
     const [newProposalDescription, setNewProposalDescription] = useState("")
     const [loading, setLoading] = useState(false)
+    const ethereumNetwork = process.env.NEXT_PUBLIC_DEFAULT_NETWORK;
+    const infuraApiKey = process.env.INFURA_API_KEY
+    const ethereumPrivateKey = process.env.ETHEREUM_PRIVATE_KEY
 
     useEffect(() => {
         if (address && account.isConnected) {
@@ -41,9 +46,15 @@ const Governance: React.FC = () => {
     }, [address, account.chainId, account.isConnected])
 
     const getGovernanceContract = () => {
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const provider = ethereumNetwork === "localhost"
+            ? new JsonRpcProvider("http://127.0.0.1:8545")
+            : new InfuraProvider(ethereumNetwork, infuraApiKey);
         if (!provider) throw new Error("No Web3 Provider")
-        return new ethers.Contract(GOVERNANCE_ADDRESS, GovernanceABI.abi, provider.getSigner())
+
+        // @ts-expect-error
+        const signer = new Wallet(ethereumPrivateKey, provider)
+
+        return new ethers.Contract(GOVERNANCE_ADDRESS, GovernanceABI.abi, signer)
     }
 
     const fetchProposals = async () => {
@@ -58,8 +69,8 @@ const Governance: React.FC = () => {
                     id: i,
                     name: proposal.name,
                     description: proposal.description,
-                    forVotes: ethers.utils.formatEther(proposal.forVotes),
-                    againstVotes: ethers.utils.formatEther(proposal.againstVotes),
+                    forVotes: ethers.formatEther(proposal.forVotes),
+                    againstVotes: ethers.formatEther(proposal.againstVotes),
                     executed: proposal.executed,
                     endTime: new Date(proposal.endTime.toNumber() * 1000),
                     proposer: proposal.proposer
@@ -74,17 +85,6 @@ const Governance: React.FC = () => {
 
     const joinCommunity = async () => {
         setLoading(true)
-        try {
-            console.log("Joining Community")
-            toast(<div>Link - {`https://opencampus-codex.blockscout.com/tx/${tx.hash}`}</div>)
-        } catch (error) {
-            console.error("Error joining community:", error)
-            toast.error("Failed to join community!")
-
-            toast(<div>{(error as any)?.reason || "Unknown error occurred"}</div>)
-        } finally {
-            setLoading(false)
-        }
     }
 
     const createProposal = async (e: React.FormEvent) => {

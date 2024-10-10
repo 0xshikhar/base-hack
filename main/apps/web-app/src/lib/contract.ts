@@ -1,4 +1,4 @@
-import { ethers } from "ethers"
+import { ethers, InfuraProvider } from "ethers"
 import GOVERNANCE from "../../contract-artifacts/Governance.json"
 import NEBULAID from "../../contract-artifacts/NebulaIDNFT.json"
 
@@ -7,10 +7,10 @@ export const NEBULAID_ADDRESS = "0x419cFe85e77a0A26B9989059057318F59764F7C5"
 
 // OwnerWallet = 0xBB79D409D53E7E0bE4E412465dEBee16A7E208f2;
 
-export function getGoveranceContract(provider: ethers.providers.Web3Provider) {
-    return new ethers.Contract(GOVERNANCE_ADDRESS, GOVERNANCE.abi, provider.getSigner())
-}
+// export function getGoveranceContract(provider: ethers.BrowserProvider) {
+//     return new ethers.Contract(GOVERNANCE_ADDRESS, GOVERNANCE.abi, provider.getSigner())
+// }
 
-export function getNebulaId(provider: ethers.providers.Web3Provider) {
-    return new ethers.Contract(NEBULAID_ADDRESS, NEBULAID.abi, provider.getSigner())
-}
+// export function getNebulaId(provider: ethers.BrowserProvider) {
+//     return new ethers.Contract(NEBULAID_ADDRESS, NEBULAID.abi, provider.getSigner())
+// }
