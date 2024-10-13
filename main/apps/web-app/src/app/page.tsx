@@ -18,6 +18,9 @@ import { NEBULAID_ADDRESS } from "@/lib/contract"
 import NebulaIDNFT from "../../contract-artifacts/NebulaIDNFT.json"
 import { useAccount } from "wagmi"
 import { ethers, Contract, InfuraProvider, JsonRpcProvider, Wallet } from "ethers"
+import { createEnsPublicClient } from '@ensdomains/ensjs'
+import { http } from 'viem'
+import { mainnet, arbitrumSepolia } from 'viem/chains'
 
 type HomeProps = {
     setUseTestAadhaar: (state: boolean) => void
@@ -185,7 +188,7 @@ export default function HomePage() {
     }
 
     return (
-        <div className="p-[10rem]">
+        <div className="p-[4rem] md:p-[8rem] lg:p-[10rem] ">
             <div className="hero-content text-black text-center">
                 <div className="flex flex-col w-max">
                     <div className="mb-5 text-5xl font-serif font-bold"> Get Your Universal Profile ID</div>
@@ -195,6 +198,22 @@ export default function HomePage() {
                     </div>
                     <div className="pt-10">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="bg-white p-6 rounded-xl shadow-xl ">
+                                <Link href="/">
+                                    <div className="bg-white p-6 rounded-xl ">
+                                        <h2 className="text-2xl font-semibold mb-4">ENS Verification</h2>
+                                        <div>
+
+                                        </div>
+                                        <button
+                                            className="button-link bg-black m-2 px-4 py-2 text-white rounded"
+                                            onClick={createReview}
+                                        >
+                                            Verify your ENS
+                                        </button>
+                                    </div>
+                                </Link>
+                            </div>
                             <div className="bg-white p-6 rounded-xl shadow-xl ">
                                 <Link href="/">
                                     <div className="bg-white p-6 rounded-xl ">
@@ -235,6 +254,11 @@ export default function HomePage() {
                                     </div>
                                 </Link>
                             </div>
+
+                        </div>
+                    </div>
+                    <div className="py-5">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="bg-white p-6 rounded-xl shadow-xl ">
                                 <Link href="/">
                                     <div className="bg-white p-6 rounded-xl">
@@ -259,10 +283,6 @@ export default function HomePage() {
                                     </div>
                                 </Link>
                             </div>
-                        </div>
-                    </div>
-                    <div className="py-5">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="bg-white p-6 rounded-xl shadow-xl ">
                                 <Link href="/">
                                     <div className="bg-white p-6 rounded-xl ">

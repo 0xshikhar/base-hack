@@ -14,7 +14,7 @@ import {
 import { WagmiProvider } from "wagmi"
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
 import "dotenv/config"
-import { sepolia, scrollSepolia, mantaSepoliaTestnet } from "viem/chains"
+import { arbitrumSepolia, arbitrum, sepolia, } from "viem/chains"
 
 // const opencampus = {
 //     id: 656476,
@@ -43,17 +43,17 @@ const projectId = "9811958bd307518b364ff7178034c435"
 const config = getDefaultConfig({
     appName: "NebulaID",
     projectId: projectId,
-    chains: [sepolia, scrollSepolia, mantaSepoliaTestnet],
+    chains: [arbitrumSepolia, arbitrum, sepolia],
     ssr: true // If your dApp uses server side rendering (SSR)
 })
 
 const { wallets } = getDefaultWallets({
-    appName: "RainbowKit demo",
+    appName: "NebulaID",
     projectId
 })
 
 const demoAppInfo = {
-    appName: "My Wallet Demo"
+    appName: "Universal Identity Protocol"
 }
 
 const queryClient = new QueryClient()
