@@ -5,7 +5,7 @@
 The smart contracts are located in the `apps/contracts` directory. They are written in Solidity and compiled using Hardhat.
 
 Sepolia contract address - 0x419cFe85e77a0A26B9989059057318F59764F7C5
-Manta contract address - 0x419cFe85e77a0A26B9989059057318F59764F7C5
+Arbitrum contract address - 0x419cFe85e77a0A26B9989059057318F59764F7C5
 
 
 ## Test it yourself!
