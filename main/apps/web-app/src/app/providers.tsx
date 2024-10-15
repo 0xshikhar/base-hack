@@ -14,7 +14,7 @@ import {
 import { WagmiProvider } from "wagmi"
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
 import "dotenv/config"
-import { arbitrumSepolia, arbitrum, sepolia, } from "viem/chains"
+import { arbitrumSepolia, arbitrum, sepolia, mainnet } from "viem/chains"
 
 // const opencampus = {
 //     id: 656476,
@@ -43,7 +43,7 @@ const projectId = "9811958bd307518b364ff7178034c435"
 const config = getDefaultConfig({
     appName: "NebulaID",
     projectId: projectId,
-    chains: [arbitrumSepolia, arbitrum, sepolia],
+    chains: [arbitrumSepolia, arbitrum, sepolia, mainnet],
     ssr: true // If your dApp uses server side rendering (SSR)
 })
 

@@ -20,12 +20,18 @@ import { useAccount } from "wagmi"
 import { ethers, Contract, InfuraProvider, JsonRpcProvider, Wallet } from "ethers"
 import { createEnsPublicClient } from '@ensdomains/ensjs'
 import { http } from 'viem'
-import { mainnet, arbitrumSepolia } from 'viem/chains'
+import { mainnet, arbitrumSepolia, arbitrum } from 'viem/chains'
 
 type HomeProps = {
     setUseTestAadhaar: (state: boolean) => void
     useTestAadhaar: boolean
 }
+
+const client = createEnsPublicClient({
+    chain: mainnet, // or arbitrumSepolia or arbitrum
+    transport: http(),
+})
+
 
 export default function HomePage() {
     const router = useRouter()
