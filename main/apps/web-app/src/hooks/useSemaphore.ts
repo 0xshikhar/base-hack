@@ -32,7 +32,7 @@ export default function useSemaphore(): SemaphoreContextType {
     )
 
     const refreshReview = useCallback(async (): Promise<void> => {
-        const provider = new JsonRpcProvider("http://127.0.0.1:8545")
+        const provider = new JsonRpcProvider("https://eth-sepolia.g.alchemy.com/v2/Kd1XQbFAa3ZboKORKFNQ9mmtcrM5PbZv")
         const contract = new Contract(process.env.NEXT_PUBLIC_REVIEW_CONTRACT_ADDRESS as string, Feedback.abi, provider)
 
         const reviews: BigNumberish[] = await contract.getPosts()

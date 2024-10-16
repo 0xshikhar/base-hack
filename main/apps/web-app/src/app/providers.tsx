@@ -16,31 +16,9 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
 import "dotenv/config"
 import { arbitrumSepolia, arbitrum, sepolia, mainnet } from "viem/chains"
 
-// const opencampus = {
-//     id: 656476,
-//     name: "opencampus",
-//     rpcUrls: {
-//         public: { http: ["https://rpc.open-campus-codex.gelato.digital"] },
-//         default: { http: ["https://rpc.open-campus-codex.gelato.digital"] },
-//     },
-//     blockExplorers: {
-//         default: {
-//             name: "Open Campus Codex",
-//             url: "https://opencampus.gelatoscout.com",
-//             apiUrl: "https://opencampus.gelatoscout.com/api",
-//         },
-//     },
-//     nativeCurrency: {
-//         decimals: 18,
-//         name: "EDU",
-//         symbol: "EDU",
-//     },
-//     testnet: true,
-// } as const satisfies Chain;
-
 const projectId = "9811958bd307518b364ff7178034c435"
 
-const config = getDefaultConfig({
+export const config = getDefaultConfig({
     appName: "NebulaID",
     projectId: projectId,
     chains: [arbitrumSepolia, arbitrum, sepolia, mainnet],
