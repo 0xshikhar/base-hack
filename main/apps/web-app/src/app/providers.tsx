@@ -14,14 +14,21 @@ import {
 import { WagmiProvider } from "wagmi"
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query"
 import "dotenv/config"
-import { arbitrumSepolia, arbitrum, sepolia, mainnet } from "viem/chains"
+import { baseSepolia, base, sepolia, mainnet } from "viem/chains"
+import { AuthKitProvider } from '@farcaster/auth-kit';
 
 const projectId = "9811958bd307518b364ff7178034c435"
+
+const configFarcaster = {
+    rpcUrl: 'https://mainnet.optimism.io',
+    domain: 'nebulaid.xyz',
+    siweUri: 'https://example.com/login',
+};
 
 export const config = getDefaultConfig({
     appName: "NebulaID",
     projectId: projectId,
-    chains: [arbitrumSepolia, arbitrum, sepolia, mainnet],
+    chains: [baseSepolia, base, sepolia, mainnet],
     ssr: true // If your dApp uses server side rendering (SSR)
 })
 
@@ -42,7 +49,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return (
         <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
-                <RainbowKitProvider appInfo={demoAppInfo}>{mounted && children}</RainbowKitProvider>
+                <AuthKitProvider config={configFarcaster}>
+                    <RainbowKitProvider appInfo={demoAppInfo}>{mounted && children}</RainbowKitProvider>
+                </AuthKitProvider>
             </QueryClientProvider>
         </WagmiProvider>
     )

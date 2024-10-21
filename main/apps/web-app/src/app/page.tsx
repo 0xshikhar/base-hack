@@ -21,6 +21,10 @@ import { signMessage } from '@wagmi/core'
 import config from '@/app/providers'
 import { ethers, Contract, JsonRpcProvider, Wallet, AlchemyProvider } from "ethers"
 // import { publicClient } from '@/lib/contract'
+import '@farcaster/auth-kit/styles.css';
+import { SignInButton } from '@farcaster/auth-kit';
+import FarcasterProfile from "@/components/FarcasterProfile"
+import { useProfile } from '@farcaster/auth-kit';
 
 
 type HomeProps = {
@@ -71,6 +75,13 @@ export default function HomePage() {
             setDisplayName(address); // If no ENS name, display address
         }
     }, [ensName, address]);
+
+    const profile = useProfile();
+    console.log("Profile: ", profile, profile.profile.displayName)
+    // const {
+    //     isAuthenticated,
+    //     profile: { fid, displayName, custody },
+    // } = profile;
 
     useEffect(() => {
         const init = async () => {
@@ -161,7 +172,24 @@ export default function HomePage() {
         try {
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
-            const message = `I am signing my ENS name: ${displayName} for my Nebula ID verification`;
+            const message = `I am signing my ENS account: <b>0xshikhar</b> for my Nebula ID verification`;
+            console.log('message:', message);
+
+            const signedMessage = await signer.signMessage(message);
+            console.log('Signed message:', signedMessage);
+            setEnsVerified(signedMessage)
+
+            // setSignedMessage(signature);
+        } catch (err) {
+            console.log('Failed to sign message.', err);
+        }
+    };
+
+    const signFarcasterMessage = async () => {
+        try {
+            const provider = new ethers.BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const message = `I am signing my Farcaster account: ${profile.profile?.displayName} for my Nebula ID verification`;
             console.log('message:', message);
 
             const signedMessage = await signer.signMessage(message);
@@ -243,6 +271,44 @@ export default function HomePage() {
                     </div>
                     <div className="pt-10">
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                            <div className="bg-white p-6 rounded-xl shadow-xl ">
+                                <Link href="/">
+                                    <div className="bg-white p-6 rounded-xl ">
+                                        <h2 className="text-2xl font-semibold mb-4">Farcaster Verification</h2>
+
+                                        <FarcasterProfile />
+
+                                        <div className="flex justify-center pt-4 ">
+                                            <SignInButton />
+                                        </div>
+                                        <div className="flex justify-center pt-4 ">
+                                            {profile.isAuthenticated ? (
+                                                < div >
+                                                    <button
+                                                        className="button-link bg-black m-2 px-4 py-2 text-white rounded"
+                                                        onClick={signFarcasterMessage}
+                                                    >
+                                                        Verify your Farcaster
+                                                    </button>
+                                                </div>
+
+                                            ) : (
+                                                <div>
+
+                                                </div>
+                                            )}
+                                        </div>
+                                        {/* <button
+                                            className="button-link bg-black m-2 px-4 py-2 text-white rounded"
+                                            onClick={createReview}
+                                        >
+                                            Verify your Farcaster Profile
+                                        </button> */}
+                                    </div>
+                                </Link>
+                            </div>
+
                             <div className="bg-white p-6 rounded-xl shadow-xl ">
                                 <Link href="/">
                                     <div className="bg-white p-6 rounded-xl ">
@@ -270,20 +336,7 @@ export default function HomePage() {
                                     </div>
                                 </Link>
                             </div>
-                            <div className="bg-white p-6 rounded-xl shadow-xl ">
-                                <Link href="/">
-                                    <div className="bg-white p-6 rounded-xl ">
-                                        <h2 className="text-2xl font-semibold mb-4">Twitter Verification</h2>
-                                        <p>Using TLSNotary</p>
-                                        <button
-                                            className="button-link bg-black m-2 px-4 py-2 text-white rounded"
-                                            onClick={createReview}
-                                        >
-                                            Verify your Profile
-                                        </button>
-                                    </div>
-                                </Link>
-                            </div>
+
                             <div className="bg-white p-6 rounded-xl shadow-xl ">
                                 <Link href="/">
                                     <div className="bg-white p-6 rounded-xl ">
@@ -317,11 +370,26 @@ export default function HomePage() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="bg-white p-6 rounded-xl shadow-xl ">
                                 <Link href="/">
+                                    <div className="bg-white p-6 rounded-xl ">
+                                        <h2 className="text-2xl font-semibold mb-4">Twitter Verification</h2>
+                                        <p>Using TLSNotary</p>
+                                        <button
+                                            className="button-link bg-black m-2 px-4 py-2 text-white rounded"
+                                            onClick={createReview}
+                                        >
+                                            Verify your Profile
+                                        </button>
+                                    </div>
+                                </Link>
+                            </div>
+
+                            <div className="bg-white p-6 rounded-xl shadow-xl ">
+                                <Link href="/">
                                     <div className="bg-white p-6 rounded-xl">
                                         <h2 className="text-2xl font-semibold mb-4">Nationality Verification</h2>
                                         <p>Only Indian ID using AnonAdhaar </p>
 
-                                        <div className="pt-4 align-center ">
+                                        <div className="flex justify-center pt-4 ">
                                             <LogInWithAnonAadhaar nullifierSeed={1234} />
                                             {anonAadhaar.status === "logged-in" && (
                                                 <>
@@ -443,4 +511,32 @@ export default function HomePage() {
             }
         </div >
     )
+}
+
+
+function Profile() {
+    const profile = useProfile();
+    const {
+        isAuthenticated,
+        profile: { fid, displayName, custody },
+    } = profile;
+
+    return (
+        <>
+            {isAuthenticated ? (
+                <div>
+                    <p>
+                        Hello, {displayName}! Your FID is {fid}.
+                    </p>
+                    <p>Your custody address is: </p>
+                    <pre>{custody}</pre>
+                </div>
+            ) : (
+                <p>
+                    Click the "Sign in with Farcaster" button above, then scan the QR code
+                    to sign in.
+                </p>
+            )}
+        </>
+    );
 }
